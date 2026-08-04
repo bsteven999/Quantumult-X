@@ -8,7 +8,7 @@
 
 ## 📌 最新更新狀態
 
-* **最後自動同步時間**：`<!-- LAST_UPDATE_START -->尚未更新<!-- LAST_UPDATE_END -->`
+* **最後自動同步時間**：`<!-- LAST_UPDATE_START -->2026-08-04 11:00:33 (CST)<!-- LAST_UPDATE_END -->`
 * **自動更新機制**：每日 UTC 00:00（台灣時間 08:00）透過 GitHub Actions 自動比對與更新。
 
 ---
