@@ -77,5 +77,7 @@ def main():
             for reg in manual_regex:
                 f.write(f"# {reg}\n")
 
+    print(f"Porn 規則轉換完成！產出檔案：{OUTPUT_FILE} (共 {len(parsed_rules)} 條規則)")
+
 if __name__ == "__main__":
     main()
