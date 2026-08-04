@@ -2,8 +2,8 @@ name: Auto Update Rules
 
 on:
   schedule:
-    - cron: '0 0 * * *'
-  workflow_dispatch:
+    - cron: '0 0 * * *'  # 每日 UTC 00:00 (台灣時間 08:00) 自動執行
+  workflow_dispatch:      # 支援手動觸發
 
 jobs:
   build:
@@ -22,10 +22,18 @@ jobs:
           python scripts/convert_porn.py
           python scripts/convert_ai.py
 
+      - name: Update README with timestamp & links
+        run: |
+          # 取得台灣時間 (UTC+8)
+          UPDATED_AT=$(TZ="Asia/Taipei" date "+%Y-%m-%d %H:%M:%S (CST)")
+          
+          # 自動取代 README.md 中的更新時間區塊
+          sed -i "s/<!-- LAST_UPDATE_START -->.*<!-- LAST_UPDATE_END -->/<!-- LAST_UPDATE_START -->${UPDATED_AT}<!-- LAST_UPDATE_END -->/g" README.md
+
       - name: Commit & Push changes
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add rules/
-          git diff-index --quiet HEAD || git commit -m "Auto update QX rules"
+          git add rules/ README.md
+          git diff-index --quiet HEAD || git commit -m "Auto update QX rules & README [skip ci]"
           git push
