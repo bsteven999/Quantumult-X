@@ -15,9 +15,10 @@ manual_regex = []
 
 KEYWORD_EXTRACTOR = re.compile(r'([a-zA-Z0-9\-]{4,})')
 
-# 1. 補強 wnacg 主品牌與常見 TLD
+# 1. 補強 wnacg 主品牌、圖片 CDN (wnimg) 與常見 TLD
 CUSTOM_RULES = [
     f"HOST-KEYWORD,wnacg,{POLICY_NAME}",
+    f"HOST-KEYWORD,wnimg,{POLICY_NAME}",
     f"HOST-SUFFIX,wnacg.com,{POLICY_NAME}",
     f"HOST-SUFFIX,wnacg.org,{POLICY_NAME}",
     f"HOST-SUFFIX,wnacg.net,{POLICY_NAME}",
