@@ -22,14 +22,14 @@ jobs:
           python scripts/convert_porn.py
           python scripts/convert_ai.py
 
-      - name: Update README with timestamp & links
+      - name: Update README with timestamp
         run: |
-          # 取得台灣時間 (UTC+8)
-          UPDATED_AT=$(TZ="Asia/Taipei" date "+%Y-%m-%d %H:%M:%S (CST)")
+          # 取得台灣時間 (日期與時間，或依喜好調整格式)
+          UPDATED_AT=$(TZ="Asia/Taipei" date "+%Y-%m-%d %H:%M:%S")
           
-          # 自動取代 README.md 中的更新時間區塊
-          sed -i "s/<!-- LAST_UPDATE_START -->.*<!-- LAST_UPDATE_END -->/<!-- LAST_UPDATE_START -->${UPDATED_AT}<!-- LAST_UPDATE_END -->/g" README.md
-
+          # 直接替換 __LAST_UPDATE_TIME__ 佔位符
+          sed -i "s/__LAST_UPDATE_TIME__/${UPDATED_AT}/g" README.md
+          
       - name: Commit & Push changes
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
