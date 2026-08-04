@@ -22,13 +22,13 @@ jobs:
           python scripts/convert_porn.py
           python scripts/convert_ai.py
 
-      - name: Update README with timestamp
+      - name: Update README with timestamp & links
         run: |
-          # 取得台灣時間 (日期與時間，或依喜好調整格式)
+          # 取得台灣時間 (日期與時間)
           UPDATED_AT=$(TZ="Asia/Taipei" date "+%Y-%m-%d %H:%M:%S")
           
-          # 直接替換 __LAST_UPDATE_TIME__ 佔位符
-          sed -i "s/__LAST_UPDATE_TIME__/${UPDATED_AT}/g" README.md
+          # 精準匹配並替換冒號後方的所有文字
+          sed -i "s/\(\* \*\*最後自動同步時間\*\*：\).*/\1 ${UPDATED_AT}/g" README.md
           
       - name: Commit & Push changes
         run: |
