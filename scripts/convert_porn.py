@@ -15,6 +15,28 @@ manual_regex = []
 
 KEYWORD_EXTRACTOR = re.compile(r'([a-zA-Z0-9\-]{4,})')
 
+# 補強 wnacg 主品牌與常見 TLD 關鍵字
+CUSTOM_RULES = [
+    f"HOST-KEYWORD,wnacg,{POLICY_NAME}",
+    f"HOST-SUFFIX,wnacg.com,{POLICY_NAME}",
+    f"HOST-SUFFIX,wnacg.org,{POLICY_NAME}",
+    f"HOST-SUFFIX,wnacg.net,{POLICY_NAME}",
+    f"HOST-SUFFIX,wnacg.cc,{POLICY_NAME}",
+    f"HOST-SUFFIX,wnacg.fun,{POLICY_NAME}",
+    f"HOST-SUFFIX,wnacg.download,{POLICY_NAME}",
+    f"HOST-SUFFIX,wnacg.link,{POLICY_NAME}",
+]
+
+def process_wn_numbered_domains(domain_str):
+    """
+    自動識別並處理 wn + 數字 (例如 wn01.com, wn123.net) 相關域名
+    """
+    # 匹配以 wn 開頭且後續為純數字的域名主體 (例如 wn01, wn99)
+    if re.search(r'\bwn\d+\b', domain_str, re.IGNORECASE):
+        # 提取域名後綴並自動補全 HOST-SUFFIX 規則
+        clean_domain = domain_str.split(':')[0].strip()
+        parsed_rules.add(f"HOST-SUFFIX,{clean_domain},{POLICY_NAME}")
+
 def fetch_and_parse(filename):
     if filename in visited_files:
         return
@@ -38,8 +60,17 @@ def fetch_and_parse(filename):
             fetch_and_parse(line.replace("include:", "").strip())
             continue
 
+        # 自動檢測並補全包含 wn{xx} 數字變體的域名
+        process_wn_numbered_domains(line)
+
         if line.startswith("regexp:"):
             reg_expr = line.replace("regexp:", "").strip()
+            
+            # 若正則表達式內包含 wn+數字，直接提取為 HOST-KEYWORD 或解析
+            wn_match = re.search(r'wn\d+', reg_expr, re.IGNORECASE)
+            if wn_match:
+                parsed_rules.add(f"HOST-KEYWORD,{wn_match.group(0)},{POLICY_NAME}")
+
             matches = KEYWORD_EXTRACTOR.findall(reg_expr)
             ignored_tlds = {'com', 'net', 'org', 'xyz', 'info', 'buzz', 'top', 'life', 'icu', 'one'}
             valid_kw = [m for m in matches if m.lower() not in ignored_tlds and not m.isdigit()]
@@ -62,6 +93,10 @@ def fetch_and_parse(filename):
 
 def main():
     fetch_and_parse(TARGET_CATEGORY)
+    
+    # 匯入自訂補充規則
+    for rule in CUSTOM_RULES:
+        parsed_rules.add(rule)
     
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     
