@@ -18,12 +18,12 @@ jobs:
           python-version: '3.x'
 
       - name: Run convert script
-        run: python scripts/convert_qx.py
+        run: python scripts/convert.py
 
       - name: Commit & Push changes
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add rules/category-porn.snippets
-          git diff-index --quiet HEAD || git commit -m "Auto-update QX rules"
+          git add rules/porn.snippets
+          git diff-index --quiet HEAD || git commit -m "Auto update porn rules"
           git push
